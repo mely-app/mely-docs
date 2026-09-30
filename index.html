@@ -1,56 +1,341 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mely App - Legal Documents</title>
-    <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            line-height: 1.6; 
-            max-width: 600px; 
-            margin: 80px auto; 
-            padding: 0 20px; 
-            color: #333; 
-            text-align: center;
-        }
-        h1 { margin-bottom: 10px; color: #007AFF; }
-        p { color: #666; margin-bottom: 40px; }
-        .link-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .doc-link {
-            display: block;
-            padding: 15px;
-            background-color: #f0f0f5;
-            color: #007AFF;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: background-color 0.2s;
-        }
-        .doc-link:hover {
-            background-color: #e0e0e9;
-        }
-        footer { margin-top: 100px; font-size: 0.8em; color: #999; }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mely — 1日ひとこと体調日記</title>
+<meta name="description" content="気分・体調・生理周期を記録するiOSアプリ Mely。広告なし、買い切りの追加機能のみ。" />
+<meta property="og:title" content="Mely — 気づく役は、アプリが引き受けます。" />
+<meta property="og:description" content="気分・体調・生理周期を記録するiOSアプリ。" />
+<meta property="og:image" content="assets/icon.png" />
+<meta property="og:type" content="website" />
+<link rel="icon" href="assets/icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F7F9FC;
+    --ink: #3A3F45;
+    --ink-2: #666666;
+    --ink-3: #999999;
+    --tiffany: #81D8D0;
+    --blue: #78A0C8;
+    --hair: rgba(58, 63, 69, 0.12);
+    --button: #17191C;
+    --shadow-1: rgba(40, 55, 72, 0.22);
+    --shadow-2: rgba(40, 55, 72, 0.10);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 2;
+    letter-spacing: 0.05em;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  p { margin: 0; }
+  h1, h2 { margin: 0; font-weight: 300; }
+
+  :focus-visible { outline: 1px solid var(--blue); outline-offset: 4px; }
+
+  .wrap { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* ---------- header ---------- */
+  .header {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-size: 15px; letter-spacing: 0.14em; font-weight: 400; }
+  .brand img { width: 22px; height: 22px; border-radius: 6px; }
+  .nav { display: flex; gap: 26px; }
+  .nav a { font-size: 11.5px; letter-spacing: 0.14em; color: var(--ink-2); padding: 6px 0; }
+  .nav a:hover { color: var(--ink); }
+
+  /* ---------- store button ---------- */
+  .store {
+    display: inline-flex; align-items: center; gap: 9px;
+    transition: opacity 180ms ease;
+  }
+  .store:hover { opacity: 0.86; }
+
+  /* ---------- phone frame ---------- */
+  .phone {
+    width: 250px; flex: none;
+    padding: 11px; border-radius: 44px;
+    background: #101113;
+    box-shadow:
+      0 30px 60px -18px var(--shadow-1),
+      0 90px 140px -30px var(--shadow-2);
+  }
+  .phone > div {
+    border-radius: 34px; overflow: hidden;
+    aspect-ratio: 9 / 19.5; background: #F2F4F7;
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: min(100svh, 960px);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 120px 16px 120px;
+    text-align: center;
+    position: relative;
+  }
+  .hero__text { width: 100%; max-width: 440px; margin-bottom: 64px; }
+  .hero h1 {
+    font-size: clamp(27px, 7.2vw, 36px);
+    line-height: 1.75; letter-spacing: 0.08em;
+    margin-bottom: 22px;
+  }
+  .hero p { color: var(--ink-2); margin-bottom: 36px; }
+  .scroll {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    font-size: 9px; letter-spacing: 0.3em; color: var(--ink-3);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .scroll::after { content: ""; width: 1px; height: 28px; background: var(--hair); }
+
+  /* ---------- feature sections ---------- */
+  .feature {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 110px 16px;
+    gap: 56px;
+  }
+  .feature__text { max-width: 440px; width: 100%; }
+  .label {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 10.5px; letter-spacing: 0.24em; color: var(--ink-3);
+    margin-bottom: 26px;
+  }
+  .label .num { color: var(--tiffany); font-weight: 500; letter-spacing: 0.1em; }
+  .label::before { content: ""; order: 1; width: 22px; height: 1px; background: var(--tiffany); }
+  .label .num { order: 0; }
+  .label .en { order: 2; }
+  h2 {
+    font-size: clamp(24px, 6vw, 30px);
+    line-height: 1.7; letter-spacing: 0.07em;
+    margin-bottom: 22px;
+  }
+  .feature p { color: var(--ink-2); }
+  .feature .note { color: var(--ink); margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--hair); }
+  .feature .note b { font-weight: 500; }
+
+  /* ---------- prose sections ---------- */
+  .prose {
+    padding: 110px 16px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .prose__inner { max-width: 560px; width: 100%; }
+  .prose h2 { font-size: clamp(24px, 6vw, 28px); }
+  .prose p { color: var(--ink-2); }
+  .prose p + p { margin-top: 26px; }
+  .price {
+    margin-top: 44px; padding-top: 24px;
+    border-top: 1px solid var(--hair);
+    color: var(--ink); font-size: 14px; letter-spacing: 0.08em;
+  }
+
+  .privacy .prose__inner { text-align: center; }
+  .privacy p + p { margin-top: 10px; }
+  .privacy .label { justify-content: center; }
+
+  /* ---------- final ---------- */
+  .final { text-align: center; padding: 140px 16px 120px; }
+  .final h2 { font-size: clamp(22px, 5.6vw, 30px); margin-bottom: 36px; }
+  .disclaimer {
+    max-width: 440px; margin: 56px auto 0;
+    font-size: 11px; line-height: 1.9; color: var(--ink-3); letter-spacing: 0.04em;
+  }
+
+  /* ---------- footer ---------- */
+  .footer {
+    padding: 36px 16px 44px;
+    border-top: 1px solid var(--hair);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    font-size: 11px; letter-spacing: 0.1em; color: var(--ink-3);
+  }
+  .footer nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; }
+  .footer nav a { color: var(--ink-2); padding: 4px 0; }
+  .footer nav a:hover { color: var(--ink); }
+
+  /* ---------- ≥ 900px ---------- */
+  @media (min-width: 900px) {
+    .header { padding: 30px 48px; }
+    .wrap { padding: 0 48px; }
+    .phone { width: 300px; padding: 12px; border-radius: 50px; }
+    .phone > div { border-radius: 39px; }
+
+    .hero {
+      flex-direction: row; justify-content: center; gap: 120px;
+      text-align: left; padding: 140px 48px 120px;
+    }
+    .hero__text { margin-bottom: 0; }
+
+    .feature {
+      flex-direction: row; justify-content: center; gap: 120px;
+      padding: 150px 48px;
+    }
+    .feature--flip .phone { order: -1; }
+    .feature__text { max-width: 420px; }
+
+    .prose { padding: 150px 48px; }
+    .final { padding: 180px 48px 150px; }
+  }
+</style>
 </head>
 <body>
 
-    <h1>Mely</h1>
-    <p>公式ドキュメント・リーガル情報</p>
+<header class="header">
+  <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="22" height="22" />Mely</a>
+  <nav class="nav" aria-label="ページ内">
+    <a href="#why">考え方</a>
+    <a href="https://apps.apple.com/jp/app/mely/id6759194068" target="_blank" rel="noopener noreferrer">App Store</a>
+  </nav>
+</header>
 
-    <div class="link-container">
-        <a href="privacy.html" class="doc-link">プライバシーポリシー (Privacy Policy)</a>
-        <a href="terms.html" class="doc-link">利用規約 (Terms of Service)</a>
-        <a href="tokushoho.html" class="doc-link">特定商取引法に基づく表記</a>
+<main id="top">
+
+  <section class="hero">
+    <div class="hero__text">
+      <h1>気分も、体調も、<br>生理周期も。</h1>
+      <p>Mely（メリー）は、数タップで気分と体調を残せる日記アプリです。生理日や気圧・天気も一緒に振り返り、自分の調子を知る手がかりにできます。</p>
+      <a class="store" href="https://apps.apple.com/jp/app/mely/id6759194068" target="_blank" rel="noopener noreferrer">
+        <img alt="MelyをAppStoreでダウンロード" src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/ja-jp?size=150x48" style="border-radius: 4px; width: 150px; height: 48px;">
+      </a>
     </div>
+    <div class="phone"><div><img src="assets/screens/home.png" alt="Melyのホーム画面。今日の天気と気圧、気圧トレンド、よく出る感情が並んでいる" width="1206" height="2622" /></div></div>
+    <span class="scroll" aria-hidden="true">SCROLL</span>
+  </section>
 
-    <footer>
-        &copy; 2026 Ayaka Onozuka
-    </footer>
+  <section class="prose">
+    <div class="prose__inner">
+      <p>「最近、なんとなく調子が悪い」<br>「生理前になると、気分が落ち込みやすい気がする」<br>「前に元気だったのは、いつだろう」</p>
+      <p>そのとき覚えていても、あとから思い出すのは難しいもの。そんなとき、記憶に頼らずに自分の記録を振り返れるように。</p>
+      <p>長い文章は必要ありません。今の気分と、当てはまる感情・体調のタグを選ぶだけ。忙しい日も、書く気力がない日も、そのときの状態をサッと残せます。</p>
+    </div>
+  </section>
+
+  <section class="feature">
+    <div class="feature__text">
+      <p class="label"><span class="num">01</span><span class="en">RECORD</span></p>
+      <h2>気分と体調を<br>数タップで記録</h2>
+      <p>気分を選び、感情や体調のタグをタップするだけ。言葉にして残したい日は、ひとこと日記も添えられます。</p>
+    </div>
+  </section>
+
+  <section class="feature feature--flip">
+    <div class="feature__text">
+      <p class="label"><span class="num">02</span><span class="en">GRAPH</span></p>
+      <h2>グラフで最近の<br>自分を振り返る</h2>
+      <p>気分や体調の推移、よく記録している感情を確認できます。不調が続いている時期だけでなく、調子がよくなってきた変化も振り返れます。</p>
+    </div>
+      <div class="phone"><div><img src="assets/screens/graph.png" alt="Melyのグラフ画面。気分の推移の折れ線に生理とPMS期が重なっている" width="1206" height="2622" /></div></div>
+  </section>
+
+  <section class="feature">
+    <div class="feature__text">
+      <p class="label"><span class="num">03</span><span class="en">CALENDAR</span></p>
+      <h2>カレンダーで<br>今月の調子をひと目で</h2>
+      <p>その日の気分を表すアイコンが並び、ひと月の様子を見渡せます。気になる日をタップすると、日記や気圧・天気を確認できます。</p>
+    </div>
+      <div class="phone"><div><img src="assets/screens/calendar.png" alt="Melyのカレンダー画面。日ごとの気分アイコンが並んでいる" width="1206" height="2622" /></div></div>
+  </section>
+
+  <section class="feature feature--flip">
+    <div class="feature__text">
+      <p class="label"><span class="num">04</span><span class="en">CONDITION</span></p>
+      <h2>体調の傾向も<br>カテゴリごとに</h2>
+      <p>頭痛や眠気、むくみといった症状は、カテゴリごとの内訳で振り返れます。生理の開始・終了も簡単に記録でき、気分や体調の変化と照らし合わせて自分のパターンを確認できます。</p>
+    </div>
+      <div class="phone"><div><img src="assets/screens/condition.png" alt="Melyの体調の推移画面。症状タグの頻度が並んでいる" width="1206" height="2622" /></div></div>
+  </section>
+
+  <section class="feature">
+    <div class="feature__text">
+      <p class="label"><span class="num">05</span><span class="en">WEATHER</span></p>
+      <h2>気圧・天気は<br>自動で記録</h2>
+      <p>記録時の気圧や天気を自動で取得。自分で調べたり入力したりせず、その日の状態と一緒に残せます。</p>
+    </div>
+  </section>
+
+  <section class="feature feature--flip">
+    <div class="feature__text">
+      <p class="label"><span class="num">06</span><span class="en">AI</span></p>
+      <h2>記録をもとに<br>AIからひとこと</h2>
+      <p>直近の記録をもとに、AIが一言アドバイスを届けます。最近の自分を振り返り、今日の過ごし方を考えるきっかけに。</p>
+    </div>
+  </section>
+
+  <section class="prose">
+    <div class="prose__inner">
+      <p class="label"><span class="num">FREE</span><span class="en">ずっと無料</span></p>
+      <h2>記録は全部無料です</h2>
+      <p>ここまでの機能はすべて無料で、アカウントを作らなくても使えます。広告も入れていません。機種変更のときにデータを引き継ぎたい場合だけ、登録が必要になります。</p>
+    </div>
+  </section>
+
+  <section class="prose" id="maker">
+    <div class="prose__inner">
+      <p class="label"><span class="num">MAKER</span><span class="en">開発者のこだわり</span></p>
+      <h2>日記が続かなかった開発者自身の思い</h2>
+      <p>Melyを作っている私自身が、日記が続かないタイプです。なので、入力の摩擦を減らすことを何より優先しました。気分を選んでタグをタップすれば記録は終わり。文章を書かなくても成り立つようにしています。</p>
+      <p>もうひとつは、記録したものがすぐ反応として返ってくることです。グラフやAIのひとことで、今の自分の状態や傾向がその場で分かります。</p>
+      <p>課金機能である買い切りの傾向分析パックは、これまでの傾向から7日先の予報を出して、見通しを立てられるようにしました。「今週の後半はしんどくなりそうだから、予定を軽くしておこう」と見通しをよくする判断材料の一つになるのが、このパックのお役立ち機能です。</p>
+    </div>
+  </section>
+
+  <section class="prose" id="why">
+    <div class="prose__inner">
+      <p class="label"><span class="num">WHY</span><span class="en">考え方</span></p>
+      <h2>買い切りにした理由</h2>
+      <p>Melyの有料機能は、一度きりの買い切りです。月額や年額の課金はありません。</p>
+      <p>気分や体調の記録は、調子が悪いときほど手が止まります。何日も、ときには何週間も開かない時期があるのは自然なことで、その間の支払いを気にしたり、後ろめたさを感じたりしてほしくありませんでした。買い切りなら、支払いはその一度で終わります。</p>
+      <p>記録は無料のまま使い続けられます。傾向分析パックが必要になったときだけ、一度の支払いで加えられます。買わないことで不便になる機能を、あとから増やすことはしません。</p>
+    </div>
+  </section>
+
+  <section class="feature feature--flip" id="pack">
+    <div class="feature__text">
+      <p class="label"><span class="num">PACK</span><span class="en">わたしの傾向分析パック</span></p>
+      <h2>傾向分析パックについて</h2>
+      <p>7日間の体調予報やしんどくなりやすい時と上向く時の傾向を「取扱説明書」にまとめる機能があります。また、生理で今回の周期がいつもの周期とどう違ったかの判断材料になります。</p>
+      <p>記録が増えるほど、傾向がはっきり見えてきます。</p>
+      <p class="note"><b>わたしの傾向分析パック</b><br>800円（税込）・買い切り</p>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>今日の気分をサッと入力。</h2>
+    <a class="store" href="https://apps.apple.com/jp/app/mely/id6759194068" target="_blank" rel="noopener noreferrer">
+        <img alt="MelyをAppStoreでダウンロード" src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/ja-jp?size=150x48" style="border-radius: 4px; width: 150px; height: 48px;">
+    </a>
+    <p class="disclaimer">※Melyは日々の記録と振り返りを支援するアプリです。不調の原因を特定したり、診断・治療を行ったりするものではありません。</p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <nav aria-label="法的情報">
+    <a href="privacy.html">プライバシーポリシー</a>
+    <a href="terms.html">利用規約</a>
+    <a href="tokushoho.html">特定商取引法に基づく表記</a>
+  </nav>
+  <p>&copy; 2026 Ayaka Onozuka</p>
+</footer>
 
 </body>
 </html>
